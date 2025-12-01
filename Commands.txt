@@ -41,6 +41,7 @@ sim/operation/toggle_custom_location_window        Toggle the Location details w
 sim/operation/show_camera_editor                   Show the camera keyframe editor.
 sim/operation/toggle_style_guide                   Toggle display of the V11 UI style guide.
 sim/operation/toggle_render_graph_viewer           Show the render graph viewer.
+sim/operation/toggle_frame_dag_graph_viewer        Show the frame dag graph viewer.
 sim/operation/toggle_fps_test_recoder              Show the FPS test recorder.
 sim/operation/slider_01                            Slider #1 On/Off control.
 sim/operation/slider_02                            Slider #2 On/Off control.
@@ -251,6 +252,9 @@ sim/igniters/igniter_contin_on_8                   Igniter #8 contin-ignition on
 sim/starters/eng_mode_norm                         Engine mode selector: NORM.
 sim/starters/eng_mode_start                        Engine mode selector: IGN/START.
 sim/starters/eng_mode_crank                        Engine mode selector: CRANK.
+sim/starters/eng_mode_air                          Engine mode selector: AIR.
+sim/starters/parallel                              Engine starter: Batteries parallel.
+sim/starters/series                                Engine starter: Batteries in series.
 sim/starters/engage_starter_1                      Engage starter #1.
 sim/starters/engage_starter_2                      Engage starter #2.
 sim/starters/engage_starter_3                      Engage starter #3.
@@ -259,6 +263,14 @@ sim/starters/engage_starter_5                      Engage starter #5.
 sim/starters/engage_starter_6                      Engage starter #6.
 sim/starters/engage_starter_7                      Engage starter #7.
 sim/starters/engage_starter_8                      Engage starter #8.
+sim/starters/enrich_1                              Advance start sequence by enriching fuel flow on engine #1.
+sim/starters/enrich_2                              Advance start sequence by enriching fuel flow on engine #2.
+sim/starters/enrich_3                              Advance start sequence by enriching fuel flow on engine #3.
+sim/starters/enrich_4                              Advance start sequence by enriching fuel flow on engine #4.
+sim/starters/enrich_5                              Advance start sequence by enriching fuel flow on engine #5.
+sim/starters/enrich_6                              Advance start sequence by enriching fuel flow on engine #6.
+sim/starters/enrich_7                              Advance start sequence by enriching fuel flow on engine #7.
+sim/starters/enrich_8                              Advance start sequence by enriching fuel flow on engine #8.
 sim/engines/throttle_down_1                        Throttle down a bit for engine #1.
 sim/engines/throttle_down_2                        Throttle down a bit for engine #2.
 sim/engines/throttle_down_3                        Throttle down a bit for engine #3.
@@ -1009,22 +1021,40 @@ sim/ice/anti_ice_toggle                            Anti-ice: toggle all.
 sim/ice/alternate_static_port                      Toggle alternate static port.
 sim/ice/pitot_heat0_on                             Anti-ice: left pitot heat on.
 sim/ice/pitot_heat1_on                             Anti-ice: right pitot heat on.
+sim/ice/pitot_heat2_on                             Anti-ice: stby pitot heat on.
 sim/ice/pitot_heat0_off                            Anti-ice: left pitot heat off.
 sim/ice/pitot_heat1_off                            Anti-ice: right pitot heat off.
+sim/ice/pitot_heat2_off                            Anti-ice: stby pitot heat off.
 sim/ice/pitot_heat0_tog                            Anti-ice: left pitot heat toggle.
 sim/ice/pitot_heat1_tog                            Anti-ice: right pitot heat toggle.
+sim/ice/pitot_heat2_tog                            Anti-ice: stby pitot heat toggle.
 sim/ice/static_heat0_on                            Anti-ice: left static heat on.
 sim/ice/static_heat1_on                            Anti-ice: right static heat on.
+sim/ice/static_heat2_on                            Anti-ice: stby static heat on.
 sim/ice/static_heat0_off                           Anti-ice: left static heat off.
 sim/ice/static_heat1_off                           Anti-ice: right static heat off.
+sim/ice/static_heat2_off                           Anti-ice: stby static heat off.
 sim/ice/static_heat0_tog                           Anti-ice: left static heat toggle.
 sim/ice/static_heat1_tog                           Anti-ice: right static heat toggle.
-sim/ice/AOA_heat0_on                               Anti-ice: AOA on.
-sim/ice/AOA_heat1_on                               Anti-ice: AOA on.
-sim/ice/AOA_heat0_off                              Anti-ice: AOA off.
-sim/ice/AOA_heat1_off                              Anti-ice: AOA off.
-sim/ice/AOA_heat0_tog                              Anti-ice: AOA toggle.
-sim/ice/AOA_heat1_tog                              Anti-ice: AOA toggle.
+sim/ice/static_heat2_tog                           Anti-ice: stby static heat toggle.
+sim/ice/AOA_heat0_on                               Anti-ice: AOA on, pilot.
+sim/ice/AOA_heat1_on                               Anti-ice: AOA on, copilot.
+sim/ice/AOA_heat2_on                               Anti-ice: AOA on, stby.
+sim/ice/AOA_heat0_off                              Anti-ice: AOA off, pilot.
+sim/ice/AOA_heat1_off                              Anti-ice: AOA off, copilot.
+sim/ice/AOA_heat2_off                              Anti-ice: AOA off, stby.
+sim/ice/AOA_heat0_tog                              Anti-ice: AOA toggle, pilot.
+sim/ice/AOA_heat1_tog                              Anti-ice: AOA toggle, copilot.
+sim/ice/AOA_heat2_tog                              Anti-ice: AOA toggle, stby.
+sim/ice/TAT_heat0_on                               Anti-ice: TAT on, pilot.
+sim/ice/TAT_heat1_on                               Anti-ice: TAT on, copilot.
+sim/ice/TAT_heat2_on                               Anti-ice: TAT on, stby.
+sim/ice/TAT_heat0_off                              Anti-ice: TAT off, pilot.
+sim/ice/TAT_heat1_off                              Anti-ice: TAT off, copilot.
+sim/ice/TAT_heat2_off                              Anti-ice: TAT off, stby.
+sim/ice/TAT_heat0_tog                              Anti-ice: TAT toggle, pilot.
+sim/ice/TAT_heat1_tog                              Anti-ice: TAT toggle, copilot.
+sim/ice/TAT_heat2_tog                              Anti-ice: TAT toggle, stby.
 sim/ice/window_heat_on                             Anti-ice: window heat on.
 sim/ice/window_heat_off                            Anti-ice: window heat off.
 sim/ice/window_heat_tog                            Anti-ice: window heat toggle.
@@ -1270,7 +1300,9 @@ sim/flight_controls/dump_fuel_toggle               Dump fuel toggle.
 sim/flight_controls/deploy_parachute               Deploy/jettison chute.
 sim/flight_controls/eject                          Eject.
 sim/flight_controls/drop_tank                      Drop all drop tanks.
-sim/weapons/re_arm_aircraft                        Re-arm aircraft to default specs.
+sim/weapons/re_arm_aircraft                        Re-arm aircraft to current UI specs.
+sim/weapons/re_arm_aircraft_PLN                    Re-arm aircraft to Plane-Maker specs.
+sim/weapons/dis_arm_aircraft                       Dis-arm aircraft to a slick bird.
 sim/weapons/master_arm_on                          Master arm on.
 sim/weapons/master_arm_off                         Master arm off.
 sim/weapons/fire_mode_down                         Weapon single/pair/ripple/salvo down.
@@ -1749,6 +1781,63 @@ sim/instruments/EFIS_copilot_mfd_map               EFIS copilot MFD map toggle (
 sim/instruments/EFIS_copilot_arc_full              EFIS copilot HSI toggle arc/full
 sim/instruments/EFIS_copilot_tcas_window           EFIS copilot map TCAS window.
 sim/instruments/EFIS_copilot_wxr_pfd               EFIS HSI arc with weather on copilot PFD.
+sim/instruments/EFIS_wxr_radar_off                 Weather radar OFF pilot
+sim/instruments/EFIS_wxr_radar_test                Weather radar TEST pilot
+sim/instruments/EFIS_wxr_radar_wx                  Weather radar WX pilot
+sim/instruments/EFIS_wxr_radar_wxt                 Weather radar WX/T pilot
+sim/instruments/EFIS_wxr_radar_map                 Weather radar MAP pilot
+sim/instruments/EFIS_wxr_radar_turb                Weather radar TURB pilot
+sim/instruments/EFIS_wxr_radar_off_copilot         Weather radar OFF copilot
+sim/instruments/EFIS_wxr_radar_test_copilot        Weather radar TEST copilot
+sim/instruments/EFIS_wxr_radar_wx_copilot          Weather radar WX copilot
+sim/instruments/EFIS_wxr_radar_wxt_copilot         Weather radar WX/T copilot
+sim/instruments/EFIS_wxr_radar_map_copilot         Weather radar MAP copilot
+sim/instruments/EFIS_wxr_radar_turb_copilot        Weather radar TURB copilot
+sim/instruments/EFIS_wxr_tilt_up                   Weather radar tilt up pilot
+sim/instruments/EFIS_wxr_tilt_down                 Weather radar tilt down pilot
+sim/instruments/EFIS_wxr_tilt_up_copilot           Weather radar tilt up copilot
+sim/instruments/EFIS_wxr_tilt_down_copilot         Weather radar tilt down copilot
+sim/instruments/EFIS_wxr_alt_up                    Weather radar alt up pilot
+sim/instruments/EFIS_wxr_alt_down                  Weather radar alt down pilot
+sim/instruments/EFIS_wxr_alt_up_copilot            Weather radar alt up copilot
+sim/instruments/EFIS_wxr_alt_down_copilot          Weather radar alt down copilot
+sim/instruments/EFIS_wxr_gain_up                   Weather radar gain up pilot
+sim/instruments/EFIS_wxr_gain_cal                  Weather radar calibrated gain (auto) pilot
+sim/instruments/EFIS_wxr_gain_down                 Weather radar gain down pilot
+sim/instruments/EFIS_wxr_gain_up_copilot           Weather radar gain up copilot
+sim/instruments/EFIS_wxr_gain_cal_copilot          Weather radar calibrated gain (auto) copilot
+sim/instruments/EFIS_wxr_gain_down_copilot         Weather radar gain down copilot
+sim/instruments/EFIS_wxr_stab_on                   Weather radar stabilization on pilot
+sim/instruments/EFIS_wxr_stab_off                  Weather radar stabilization off pilot
+sim/instruments/EFIS_wxr_stab_tog                  Weather radar stabilization toggle pilot
+sim/instruments/EFIS_wxr_stab_on_copilot           Weather radar stabilization on copilot
+sim/instruments/EFIS_wxr_stab_off_copilot          Weather radar stabilization off copilot
+sim/instruments/EFIS_wxr_stab_tog_copilot          Weather radar stabilization toggle copilot
+sim/instruments/EFIS_wxr_gcs_on                    Weather radar ground clutter supression on pilot
+sim/instruments/EFIS_wxr_gcs_off                   Weather radar ground clutter supression off pilot
+sim/instruments/EFIS_wxr_gcs_tog                   Weather radar ground clutter supression toggle pilot
+sim/instruments/EFIS_wxr_gcs_on_copilot            Weather radar ground clutter supression on copilot
+sim/instruments/EFIS_wxr_gcs_off_copilot           Weather radar ground clutter supression off copilot
+sim/instruments/EFIS_wxr_gcs_tog_copilot           Weather radar ground clutter supression toggle copilot
+sim/instruments/EFIS_wxr_pws_on                    Weather radar predictive windshear on pilot
+sim/instruments/EFIS_wxr_pws_off                   Weather radar predictive windshear off pilot
+sim/instruments/EFIS_wxr_pws_tog                   Weather radar predictive windshear toggle pilot
+sim/instruments/EFIS_wxr_auto_tilt_on              Weather radar auto-tilt on pilot
+sim/instruments/EFIS_wxr_auto_tilt_off             Weather radar auto-tilt off pilot
+sim/instruments/EFIS_wxr_auto_tilt_tog             Weather radar auto-tilt toggle pilot
+sim/instruments/EFIS_wxr_auto_tilt_on_copilot      Weather radar auto-tilt on copilot
+sim/instruments/EFIS_wxr_auto_tilt_off_copilot     Weather radar auto-tilt off copilot
+sim/instruments/EFIS_wxr_auto_tilt_tog_copilot     Weather radar auto-tilt toggle copilot
+sim/instruments/EFIS_wxr_multiscan_auto            Weather radar multiscan auto pilot
+sim/instruments/EFIS_wxr_multiscan_on_path         Weather radar multiscan on path pilot
+sim/instruments/EFIS_wxr_multiscan_all             Weather radar multiscan all elevations pilot
+sim/instruments/EFIS_wxr_multiscan_elev            Weather radar multiscan one elevation pilot
+sim/instruments/EFIS_wxr_multiscan_off             Weather radar multiscan off pilot
+sim/instruments/EFIS_wxr_multiscan_auto_copilot    Weather radar multiscan auto copilot
+sim/instruments/EFIS_wxr_multiscan_on_path_copilot Weather radar multiscan on path copilot
+sim/instruments/EFIS_wxr_multiscan_all_copilot     Weather radar multiscan all elevations copilot
+sim/instruments/EFIS_wxr_multiscan_elev_copilot    Weather radar multiscan one elevation copilot
+sim/instruments/EFIS_wxr_multiscan_off_copilot     Weather radar multiscan off copilot
 sim/instruments/PFD_copilot_popup                  EFIS copilot PFD popup.
 sim/instruments/EFIS_copilot_back                  EFIS copilot MFD back.
 sim/instruments/EFIS_copilot_softkey_1             EFIS copilot MFD softkey 1.
@@ -1927,6 +2016,7 @@ sim/autopilot/vnav_spd                             Autopilot VNAV SPD (not G1000
 sim/autopilot/gpss                                 Autopilot GPS Steering.
 sim/autopilot/climb                                Autopilot Climb Speed Ref (Collins).
 sim/autopilot/descend                              Autopilot Descend (Collins).
+sim/autopilot/hover                                Autopilot Hover (Helicopter).
 sim/autopilot/trkfpa                               Autopilot TRK/FPA vs HDG/VS toggle.
 sim/autopilot/alt_intv                             Autopilot VNAV altitude intervention.
 sim/autopilot/spd_intv                             Autopilot VNAV speed intervention.
@@ -2098,6 +2188,8 @@ sim/FMS/perf                                       FMS: PERF
 sim/FMS/fuel_pred                                  FMS: FUEL PRED
 sim/FMS/data                                       FMS: DATA
 sim/FMS/menu                                       FMS: MENU
+sim/FMS/sec_fpln                                   FMS: SEC FPLN
+sim/FMS/atc_comm                                   FMS: ATC COMM
 sim/FMS/prev                                       FMS: prev
 sim/FMS/next                                       FMS: next
 sim/FMS/key_0                                      FMS: key_0
@@ -2178,6 +2270,8 @@ sim/FMS2/perf                                      FMS2: PERF
 sim/FMS2/fuel_pred                                 FMS2: FUEL PRED
 sim/FMS2/data                                      FMS2: DATA
 sim/FMS2/menu                                      FMS2: MENU
+sim/FMS2/sec_fpln                                  FMS2: SEC FPLN
+sim/FMS2/atc_comm                                  FMS2: ATC COMM
 sim/FMS2/prev                                      FMS2: prev
 sim/FMS2/next                                      FMS2: next
 sim/FMS2/key_0                                     FMS2: key_0
@@ -2739,6 +2833,9 @@ sim/operation/rwy_lights_med                       Runway lights med.
 sim/operation/rwy_lights_hi                        Runway lights hi.
 sim/operation/toggle_ai_flies                      Toggle AI flying your aircraft.
 sim/operation/toggle_yoke                          Toggle yoke visibility.
+sim/operation/eyepoint_pilot                       Set 3D views to pilot's eyepoint.
+sim/operation/eyepoint_copilot                     Set 3D views to copilot's eyepoint.
+sim/operation/eyepoint_toggle                      Toggle 3D views between pilots' eyepoints.
 sim/operation/test_none                            Test Pattern: none
 sim/operation/test_Smear_Test_H                    Test Pattern: Smear_Test H
 sim/operation/test_Smear_Test_V                    Test Pattern: Smear_Test V
@@ -2786,6 +2883,7 @@ sim/view/3d_cockpit_toggle                         Toggle between 2-D and 3-D co
 sim/view/lock_geo                                  Lock onto current location.
 sim/view/g_loaded_camera                           G-loaded camera (internal views).
 sim/view/cinema_verite                             Hand-held camera (external views).
+sim/view/g_loaded_camera_suspend                   Momentarily suspend the G-loaded camera.
 sim/view/sunglasses                                Sunglasses.
 sim/view/night_vision                              Night vision.
 sim/view/flashlight_red                            Toggle the red flashlight.
@@ -2794,17 +2892,17 @@ sim/view/mouse_wheel_zoom_internal                 Toggle mouse wheel zoom for i
 sim/view/mouse_wheel_zoom_external                 Toggle mouse wheel zoom for external views
 sim/view/glance_left                               Glance left.
 sim/view/glance_right                              Glance right.
-sim/view/up_left                                   Glance up and left.
-sim/view/up_right                                  Glance up and right.
-sim/view/straight_up                               Glance straight up.
-sim/view/straight_down                             Glance straight down.
-sim/view/left_45                                   Glance 45 degrees left.
-sim/view/right_45                                  Glance 45 degrees right.
-sim/view/left_90                                   Glance 90 degrees left.
-sim/view/right_90                                  Glance 90 degrees right.
-sim/view/left_135                                  Glance 135 degrees left.
-sim/view/right_135                                 Glance 135 degrees right.
-sim/view/back                                      Glance backward.
+sim/view/up_left                                   Full-screen look up and left.
+sim/view/up_right                                  Full-screen look up and right.
+sim/view/straight_up                               Full-screen look straight up.
+sim/view/straight_down                             Full-screen look straight down.
+sim/view/left_45                                   Full-screen look 45 degrees left.
+sim/view/right_45                                  Full-screen look 45 degrees right.
+sim/view/left_90                                   Full-screen look 90 degrees left.
+sim/view/right_90                                  Full-screen look 90 degrees right.
+sim/view/left_135                                  Full-screen look 135 degrees left.
+sim/view/right_135                                 Full-screen look 135 degrees right.
+sim/view/back                                      Full-screen look backward.
 sim/view/3d_path_toggle                            3-D path toggle.
 sim/view/3d_path_reset                             3-D path reset.
 sim/view/show_physics_model                        Toggle physics model visualization.
@@ -2907,6 +3005,7 @@ sim/developer/dump_atc_state_to_log                Dump ATC state to the log.
 sim/developer/dump_net_state_to_log                Dump Networking state to the log.
 sim/developer/dump_wxr_state_to_log                Dump Weather state to the log.
 sim/developer/dump_scenery_info_to_log             Dump scenery debug info to the log.
+sim/developer/frame_capture                        Capture one frame.
 sim/developer/toggle_texture_browser               Toggle the texture browser window.
 sim/developer/toggle_particle_browser              Toggle the particle system browser window.
 sim/general/toggle_projection_win                  Toggle the projection configuration window.
@@ -2916,7 +3015,9 @@ sim/developer/toggle_vram_profiler                 Toggle the VRAM profiler wind
 sim/developer/toggle_plugin_admin                  Toggle the Plugin Admin window.
 sim/developer/run_fm_test_slow                     Run Flight Model Test Slow
 sim/developer/run_fm_test_med                      Run Flight Model Test Medium
+sim/developer/toggle_network_sync                  Toggle Network Synchronization of entities.
 sim/developer/toggle_rain_inspector                Toggle the Rain Inspector window.
+sim/developer/toggle_network_debug                 Toggle the network debug window.
 sim/view/toggle_screenshot_window                  Toggle the screenshot window.
 sim/VR/xpad/home_button                            Press the Home Button of the VR xPad.
 sim/VR/toggle_3d_mouse_cursor                      Toggle the 3-d mouse cursor in VR.
