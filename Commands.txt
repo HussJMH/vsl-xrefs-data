@@ -14,13 +14,13 @@ sim/operation/toggle_full_screen                   Toggle full-screen mode.
 sim/operation/reload_aircraft                      Force reloading the current aircraft (including art).
 sim/operation/reload_aircraft_no_art               Force reloading the current aircraft (skip art reload).
 sim/operation/reload_scenery                       Force reloading the current scenery.
+sim/developer/capture_frame                        Capture one frame.
 sim/operation/fail_system                          Fail selected in failures screen.
 sim/operation/make_panel_previews                  Make screenshots of your panels.
 sim/operation/close_windows                        Close any windows to get back to cockpit.
 sim/operation/load_situation_1                     Load situation.
 sim/operation/load_situation_2                     Load situation.
 sim/operation/load_situation_3                     Load situation.
-sim/view/track-ir_toggle                           Toggle TrackIR control.
 sim/map/show_current                               Toggle the sectional map window.
 sim/map/show_instructor_operator_station           Toggle the instructor operator station (IOS) window.
 sim/map/show_low_enroute                           Toggle the low enroute map.
@@ -433,6 +433,10 @@ sim/engines/fire_ext_5_on                          Fire extinguisher #5 on.
 sim/engines/fire_ext_6_on                          Fire extinguisher #6 on.
 sim/engines/fire_ext_7_on                          Fire extinguisher #7 on.
 sim/engines/fire_ext_8_on                          Fire extinguisher #8 on.
+sim/flight_controls/pitch_up                       Keyboard control: Pitch up.
+sim/flight_controls/pitch_down                     Keyboard control: Pitch down.
+sim/flight_controls/roll_left                      Keyboard control: Roll left.
+sim/flight_controls/roll_right                     Keyboard control: Roll right.
 sim/flight_controls/flaps_up                       Flaps up a notch.
 sim/flight_controls/flaps_down                     Flaps down a notch.
 sim/flight_controls/flaps_up_full                  Flaps retract fully.
@@ -1300,9 +1304,10 @@ sim/flight_controls/dump_fuel_toggle               Dump fuel toggle.
 sim/flight_controls/deploy_parachute               Deploy/jettison chute.
 sim/flight_controls/eject                          Eject.
 sim/flight_controls/drop_tank                      Drop all drop tanks.
-sim/weapons/re_arm_aircraft                        Re-arm aircraft to current UI specs.
-sim/weapons/re_arm_aircraft_PLN                    Re-arm aircraft to Plane-Maker specs.
-sim/weapons/dis_arm_aircraft                       Dis-arm aircraft to a slick bird.
+sim/weapons/load_defaults                          Load default weapons as specified by the plane's author.
+sim/weapons/unload_aircraft                        Unload all weapons.
+sim/weapons/re_arm_aircraft                        Re-arm aircraft.
+sim/weapons/dis_arm_aircraft                       Dis-arm aircraft.
 sim/weapons/master_arm_on                          Master arm on.
 sim/weapons/master_arm_off                         Master arm off.
 sim/weapons/fire_mode_down                         Weapon single/pair/ripple/salvo down.
@@ -1415,6 +1420,7 @@ sim/ground_ops/pushback_left                       Push-back for airliners: Nose
 sim/ground_ops/pushback_straight                   Push-back for airliners: Straight back.
 sim/ground_ops/pushback_right                      Push-back for airliners: Nose 90 right.
 sim/ground_ops/pushback_stop                       Push-back for airliners: Stop and let go.
+sim/ground_ops/toggle_gpu_request                  Toggle request for ground power.
 sim/ground_ops/toggle_window                       Toggle the ground handling window.
 sim/radios/power_nav1_off                          Power NAV1 off.
 sim/radios/power_nav1_on                           Power NAV1 on.
@@ -1692,6 +1698,8 @@ sim/transponder/transponder_dn                     Transponder mode down.
 sim/transponder/transponder_up                     Transponder mode up.
 sim/transponder/transponder_ta_only                Transponder TA only.
 sim/transponder/transponder_ta_ra                  Transponder TA/RA.
+sim/transponder/transponder_vfr                    Transponder VFR.
+sim/transponder/transponder_test_cancel            Transponder cancel a test in progress.
 sim/radios/nav1_standy_flip                        NAV 1 flip standby.
 sim/radios/nav2_standy_flip                        NAV 2 flip standby.
 sim/radios/com1_standy_flip                        COM 1 flip standby.
@@ -1720,6 +1728,7 @@ sim/radios/rmu1/ls_4r                              RMU 1: line select 4r
 sim/radios/rmu1/ls_5r                              RMU 1: line select 5r
 sim/radios/rmu1/ls_6r                              RMU 1: line select 6r
 sim/radios/rmu1/12                                 RMU 1: 1/2
+sim/radios/rmu1/test                               RMU 1: TEST
 sim/radios/rmu1/ID                                 RMU 1: ID
 sim/radios/rmu1/DME                                RMU 1: DME
 sim/radios/rmu1/popup                              RMU 1: Popup
@@ -1741,6 +1750,7 @@ sim/radios/rmu2/ls_4r                              RMU 2: line select 4r
 sim/radios/rmu2/ls_5r                              RMU 2: line select 5r
 sim/radios/rmu2/ls_6r                              RMU 2: line select 6r
 sim/radios/rmu2/12                                 RMU 2: 1/2
+sim/radios/rmu2/test                               RMU 2: TEST
 sim/radios/rmu2/ID                                 RMU 2: ID
 sim/radios/rmu2/DME                                RMU 2: DME
 sim/radios/rmu2/popup                              RMU 2: Popup
@@ -2250,7 +2260,7 @@ sim/FMS2/ls_3r                                     FMS2: line select 3r
 sim/FMS2/ls_4r                                     FMS2: line select 4r
 sim/FMS2/ls_5r                                     FMS2: line select 5r
 sim/FMS2/ls_6r                                     FMS2: line select 6r
-sim/FMS2/index                                     FMS: INDEX
+sim/FMS2/index                                     FMS2: INDEX
 sim/FMS2/fpln                                      FMS2: FPLN
 sim/FMS2/clb                                       FMS2: CLB
 sim/FMS2/crz                                       FMS2: CRZ
@@ -2320,6 +2330,88 @@ sim/FMS2/key_clear                                 FMS2: key_clear
 sim/FMS2/key_overfly                               FMS2: key_overfly
 sim/FMS2/CDU_popout                                FMS2: pop out CDU window
 sim/FMS2/CDU_popup                                 FMS2: CDU popup
+sim/CDU3/ls_1l                                     CDU3: line select 1l
+sim/CDU3/ls_2l                                     CDU3: line select 2l
+sim/CDU3/ls_3l                                     CDU3: line select 3l
+sim/CDU3/ls_4l                                     CDU3: line select 4l
+sim/CDU3/ls_5l                                     CDU3: line select 5l
+sim/CDU3/ls_6l                                     CDU3: line select 6l
+sim/CDU3/ls_1r                                     CDU3: line select 1r
+sim/CDU3/ls_2r                                     CDU3: line select 2r
+sim/CDU3/ls_3r                                     CDU3: line select 3r
+sim/CDU3/ls_4r                                     CDU3: line select 4r
+sim/CDU3/ls_5r                                     CDU3: line select 5r
+sim/CDU3/ls_6r                                     CDU3: line select 6r
+sim/CDU3/index                                     CDU3: INDEX
+sim/CDU3/fpln                                      CDU3: FPLN
+sim/CDU3/clb                                       CDU3: CLB
+sim/CDU3/crz                                       CDU3: CRZ
+sim/CDU3/des                                       CDU3: DES
+sim/CDU3/dir_intc                                  CDU3: DIR/INTC
+sim/CDU3/legs                                      CDU3: FPLN
+sim/CDU3/dep_arr                                   CDU3: DEP/ARR
+sim/CDU3/hold                                      CDU3: HOLD
+sim/CDU3/prog                                      CDU3: PROG
+sim/CDU3/exec                                      CDU3: EXEC
+sim/CDU3/fix                                       CDU3: FIX
+sim/CDU3/navrad                                    CDU3: NAVRAD
+sim/CDU3/airport                                   CDU3: AIRPORT
+sim/CDU3/up                                        CDU3: UP
+sim/CDU3/down                                      CDU3: DOWN
+sim/CDU3/perf                                      CDU3: PERF
+sim/CDU3/fuel_pred                                 CDU3: FUEL PRED
+sim/CDU3/data                                      CDU3: DATA
+sim/CDU3/menu                                      CDU3: MENU
+sim/CDU3/sec_fpln                                  CDU3: SEC FPLN
+sim/CDU3/atc_comm                                  CDU3: ATC COMM
+sim/CDU3/prev                                      CDU3: prev
+sim/CDU3/next                                      CDU3: next
+sim/CDU3/key_0                                     CDU3: key_0
+sim/CDU3/key_1                                     CDU3: key_1
+sim/CDU3/key_2                                     CDU3: key_2
+sim/CDU3/key_3                                     CDU3: key_3
+sim/CDU3/key_4                                     CDU3: key_4
+sim/CDU3/key_5                                     CDU3: key_5
+sim/CDU3/key_6                                     CDU3: key_6
+sim/CDU3/key_7                                     CDU3: key_7
+sim/CDU3/key_8                                     CDU3: key_8
+sim/CDU3/key_9                                     CDU3: key_9
+sim/CDU3/key_A                                     CDU3: key_A
+sim/CDU3/key_B                                     CDU3: key_B
+sim/CDU3/key_C                                     CDU3: key_C
+sim/CDU3/key_D                                     CDU3: key_D
+sim/CDU3/key_E                                     CDU3: key_E
+sim/CDU3/key_F                                     CDU3: key_F
+sim/CDU3/key_G                                     CDU3: key_G
+sim/CDU3/key_H                                     CDU3: key_H
+sim/CDU3/key_I                                     CDU3: key_I
+sim/CDU3/key_J                                     CDU3: key_J
+sim/CDU3/key_K                                     CDU3: key_K
+sim/CDU3/key_L                                     CDU3: key_L
+sim/CDU3/key_M                                     CDU3: key_M
+sim/CDU3/key_N                                     CDU3: key_N
+sim/CDU3/key_O                                     CDU3: key_O
+sim/CDU3/key_P                                     CDU3: key_P
+sim/CDU3/key_Q                                     CDU3: key_Q
+sim/CDU3/key_R                                     CDU3: key_R
+sim/CDU3/key_S                                     CDU3: key_S
+sim/CDU3/key_T                                     CDU3: key_T
+sim/CDU3/key_U                                     CDU3: key_U
+sim/CDU3/key_V                                     CDU3: key_V
+sim/CDU3/key_W                                     CDU3: key_W
+sim/CDU3/key_X                                     CDU3: key_X
+sim/CDU3/key_Y                                     CDU3: key_Y
+sim/CDU3/key_Z                                     CDU3: key_Z
+sim/CDU3/key_period                                CDU3: key_period
+sim/CDU3/key_minus                                 CDU3: key_minus
+sim/CDU3/key_slash                                 CDU3: key_slash
+sim/CDU3/key_back                                  CDU3: key_back
+sim/CDU3/key_space                                 CDU3: key_space
+sim/CDU3/key_delete                                CDU3: key_delete
+sim/CDU3/key_clear                                 CDU3: key_clear
+sim/CDU3/key_overfly                               CDU3: key_overfly
+sim/CDU3/CDU_popout                                CDU3: pop out CDU window
+sim/CDU3/CDU_popup                                 CDU3: CDU popup
 sim/annunciator/gear_warning_mute                  Mute gear warning horn.
 sim/annunciator/marker_beacon_mute                 Mute marker beacons until next marker is received.
 sim/annunciator/marker_beacon_mute_or_off          Mute marker beacons until next marker is received or indefinitely if none is received right now.
@@ -2798,7 +2890,7 @@ sim/instruments/elapsed4_cycle                     elapsed timer #4 start/stop/r
 sim/operation/pause_toggle                         Toggle simulation paused state.
 sim/operation/pause_on                             Pause the simulation.
 sim/operation/pause_off                            Unpause the simulation.
-sim/operation/freeze_toggle                        Freeze the ground locationn.
+sim/operation/freeze_toggle                        Freeze the ground location.
 sim/operation/flightmodel_speed_change             Sim 1x 2x 4x sim speed.
 sim/operation/ground_speed_change                  Sim 1x 2x 4x ground speed.
 sim/operation/video_record_toggle                  Toggle AVI movie recording.
@@ -2825,6 +2917,7 @@ sim/operation/checklist_previous                   Previous item in checklist (d
 sim/operation/contact_atc                          Contact ATC.
 sim/operation/contact_atc_ptt                      Contact ATC (Push-to-talk)
 sim/operation/toggle_auto_readback                 Toggle auto-readback of ATC messages.
+sim/operation/toggle_auto_checkin                  Toggle auto-checkin while enroute.
 sim/operation/atc_readback                         Readback last ATC message.
 sim/operation/toggle_taxi_arrows                   Toggle taxi guidance arrows.
 sim/operation/rwy_lights_off                       Runway lights off.
@@ -3005,7 +3098,6 @@ sim/developer/dump_atc_state_to_log                Dump ATC state to the log.
 sim/developer/dump_net_state_to_log                Dump Networking state to the log.
 sim/developer/dump_wxr_state_to_log                Dump Weather state to the log.
 sim/developer/dump_scenery_info_to_log             Dump scenery debug info to the log.
-sim/developer/frame_capture                        Capture one frame.
 sim/developer/toggle_texture_browser               Toggle the texture browser window.
 sim/developer/toggle_particle_browser              Toggle the particle system browser window.
 sim/general/toggle_projection_win                  Toggle the projection configuration window.
@@ -3016,14 +3108,37 @@ sim/developer/toggle_plugin_admin                  Toggle the Plugin Admin windo
 sim/developer/run_fm_test_slow                     Run Flight Model Test Slow
 sim/developer/run_fm_test_med                      Run Flight Model Test Medium
 sim/developer/toggle_network_sync                  Toggle Network Synchronization of entities.
+sim/developer/scan_for_alt_bumps                   Scan the atmosphere at random for sudden altitude changes.
 sim/developer/toggle_rain_inspector                Toggle the Rain Inspector window.
 sim/developer/toggle_network_debug                 Toggle the network debug window.
 sim/view/toggle_screenshot_window                  Toggle the screenshot window.
 sim/VR/xpad/home_button                            Press the Home Button of the VR xPad.
+sim/VR/xpad/toggle_visibility                      Toggle visibility of the VR xPad.
 sim/VR/toggle_3d_mouse_cursor                      Toggle the 3-d mouse cursor in VR.
-sim/VR/toggle_vr                                   Toggle enabling of VR hardware.
+sim/VR/toggle_vr                                   Toggle VR if possible.
+sim/VR/enable_vr                                   Enable VR if possible.
+sim/VR/disable_vr                                  Disable VR if possible.
 sim/VR/general/reset_view                          Reset VR View.
 sim/VR/quick_zoom_view                             Temporarily and Quickly Zoom in while in VR.
 sim/VR/reserved/select                             Reserved: VR Select/Trigger Button.
 sim/VR/reserved/menu                               Reserved: VR Menu Button.
 sim/VR/reserved/touchpad                           Reserved: VR Thumbstick/Touchpad Button.
+sim/VR/mixed_reality/toggle                        Toggle mixed reality between off and on.
+sim/VR/mixed_reality/on                            Enable mixed reality passthrough.
+sim/VR/mixed_reality/off                           Disable mixed reality passthrough.
+sim/VR/mixed_reality/setup_enter                   Enter mixed reality setup mode.
+sim/VR/mixed_reality/setup_apply                   Apply and exit mixed reality setup mode.
+sim/VR/mixed_reality/setup_cancel                  Cancel and exit mixed reality setup mode.
+sim/VR/mixed_reality/show_marker                   Show the 3D marker visualization.
+sim/VR/mixed_reality/hide_marker                   Hide the 3D marker visualization.
+sim/VR/mixed_reality/toggle_marker                 Toggle the 3D marker visualization.
+sim/VR/mixed_reality/enable_marker_tracking        Enable marker tracking.
+sim/VR/mixed_reality/disable_marker_tracking       Disable marker tracking.
+sim/VR/mixed_reality/toggle_marker_tracking        Toggle marker tracking.
+sim/VR/hand_tracking/toggle                        Toggle hand tracking.
+sim/VR/hand_tracking/enable                        Enable hand tracking.
+sim/VR/hand_tracking/disable                       Disable hand tracking.
+sim/view/track-ir_toggle                           Toggle TrackIR control.
+sim/head_tracking/tobii/reset_view                 Reset Tobii Head Tracking.
+sim/view/tobii_eyetracker_pause                    Pause Tobii Head Tracking.
+sim/view/tobii_eyetracker_toggle                   Toggle Tobii Head Tracking.

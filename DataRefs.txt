@@ -1,4 +1,4 @@
-2 1210 Mon Nov 24 10:10:21 2025
+2 1210 Wed Jun 24 15:46:43 2026
 
 sim/aircraft/autopilot/vvi_step_ft	float	y	feet	Step increment for autopilot VVI	
 sim/aircraft/autopilot/alt_step_ft	float	y	feet	Step increment for autopilot altitude	
@@ -7,8 +7,9 @@ sim/aircraft/autopilot/preconfigured_ap_type	int	n	enum	0=X-Plane custom, 1=Airl
 sim/aircraft/autopilot/single_axis_autopilot	int	n	boolean	Whether the autopilot is strictly single axis (bank) only.	
 sim/aircraft/autopilot/ah_source	int	n	enum	Attitude source for the autopilot: 10 = AHRS, 11 = elec gyro, 12 = vacuum gyro, 13 = turn coordinator and absolute pressure transducer	
 sim/aircraft/autopilot/dg_source	int	n	enum	Directional gyro source for the autopilot: 10 = AHRS, 11 = elec gyro (HSI or DG), 12 = vacuum gyro (DG)	
+sim/aircraft/autopilot/ap_crs_src	int	y	enum	front course source for the autopilot: 0 = GPS/LOC, 1 = OBS course, 2 = HDG bug, 3 = none (tracker only), 4 = HDG/GPSS coupler	
 sim/aircraft/view/acf_tailnum	byte[40]	y	string	Tail number	
-sim/aircraft/view/acf_modeS_id	int	y	integer	24bit (0-16777215 or 0-0xFFFFFF) unique ID of the airframe. This is also known as the ADS-B 'hexcode'.	
+sim/aircraft/view/acf_modeS_id	int	y	integer	24bit (1-16777215 or 1-0xFFFFFF) unique ID of the airframe. This is also known as the ADS-B 'hexcode'.	
 sim/aircraft/view/acf_author	byte[500]	y	string	Author's Name	
 sim/aircraft/view/acf_descrip	byte[260]	y	string	Brief description of the plane.  Was 500 chars in older planes.	
 sim/aircraft/view/acf_notes	byte[240]	y	string	Notes on the plane	
@@ -581,6 +582,7 @@ sim/atc/com2_rx_override	int	y	boolean	Set if your plugin currently receives voi
 sim/atc/com1_tx_override	int	y	boolean	Set if your plugin currently transmits voice on COM1	
 sim/atc/com2_tx_override	int	y	boolean	Set if your plugin currently transmits voice on COM2	
 sim/atc/company_msg	int	n	int	Pending ACARS messages	
+sim/atc/transponder_vfr_default	int	n	code	The transponder code to set for general VFR flights in the current location	
 sim/cockpit/autopilot/autopilot_mode	int	y	enum	The autopilot master mode (off=0, flight director=1, on=2)	
 sim/cockpit/autopilot/airspeed_mode	int	n	enum	Airspeed mode for the autopilot. DEPRECATED	DEPRECATED - DO NOT USE!!!
 sim/cockpit/autopilot/heading_mode	int	n	enum	Lateral navigation mode (GPS, heading, L-Nav approach). DEPRECATED	DEPRECATED - DO NOT USE!!!
@@ -1943,6 +1945,7 @@ sim/graphics/view/local_map_t	float	n	pixels	Bounds of the local map window duri
 sim/graphics/view/dome_offset_heading	float	y	degrees	The horizontal offset for this pass, in degrees (is not available between 12.0.7 - 12.0.9)	
 sim/graphics/view/dome_offset_pitch	float	y	degrees	The vertical offset for this pass, in degrees (is not available between 12.0.7 - 12.0.9)	
 sim/graphics/view/eq_trackir	int	n	boolean	Does the user have trackIR hardware enabled	
+sim/graphics/view/eq_tobii_eyetracker	int	y	boolean	Does the user have Tobii Eyetracker hardware enabled	
 sim/graphics/view/hide_yoke	int	y	boolean	Is the yoke visible in the 3-d cockpit?	
 sim/graphics/view/projection_matrix	float[16]	n	Matrix4x4	The current projection matrix - valid only during draw callbacks	
 sim/graphics/view/projection_matrix_3d	float[16]	n	Matrix4x4	The current projection matrix during 3-d rendering - it keeps its value during 2-d rendering so youc can figure out how to apply text labels to 3-d stuff.	
@@ -1961,6 +1964,13 @@ sim/graphics/VR/backlight_level	float	n	ratio	For OBJs used to draw VR controlle
 sim/graphics/VR/seeker_light_level	float	n	ratio	For OBJs used to draw VR controllers: Level of lighting on the tip of the controller.	
 sim/graphics/VR/touch_spot_light_level	float	n	ratio	For OBJs used to draw VR controllers: Level of lighting on the D-Pad/joystick part of the controller.	
 sim/graphics/VR/enabled	int	n	boolean	True if VR is enabled, false if it is disabled	
+sim/graphics/VR/mixed_reality_mode	int	n	enum	Mixed reality mode: 0=off, 1=on, 2=setup	
+sim/graphics/VR/marker_visible	int	n	boolean	True if the 3D marker tchotchke is currently showing	
+sim/graphics/VR/marker_tracking_enabled	int	n	boolean	True if marker tracking is enabled and supported	
+sim/graphics/VR/marker_detected	int	n	boolean	True if the HAL has a cached anchor pose available.  Stays true while the pose remains valid — no per-frame flicker when a QR briefly leaves view.	
+sim/graphics/VR/hand_tracking_enabled	int	n	boolean	True if hand tracking preference is enabled	
+sim/graphics/VR/hand_tracking_left	int	n	boolean	True if the left hand is currently tracked	
+sim/graphics/VR/hand_tracking_right	int	n	boolean	True if the right hand is currently tracked	
 sim/graphics/VR/using_3d_mouse	int	n	boolean	True if the 3-d VR mouse is in use	
 sim/graphics/VR/teleport_on_ground	int	n	boolean	True if the user is teleporting outside the aircraft.  In this case the pilot's head position is not reliable - use the regular camera location	
 sim/joystick/has_joystick	int	n	boolean	Do we have a joystick?	
@@ -2003,8 +2013,8 @@ sim/joystick/joystick_axis_values	float[500]	n	ratio	The deflection of this joys
 sim/joystick/joystick_axis_minimum	float[500]	y	ratio	Min raw value ever seen [Was 15 before 850][Was 24 before 860][was 32 before 900]	
 sim/joystick/joystick_axis_maximum	float[500]	y	ratio	Max raw value ever seen [Was 15 before 850][Was 24 before 860][was 32 before 900]	
 sim/joystick/joystick_button_values	int[3200]	n	boolean	Is this button pressed? [Was 64 before 850][was 160 before 900]	
-sim/joystick/joy_mapped_axis_avail	int[79]	n	boolean	True if there is joystick hardware of some kind providing this axis right now.	
-sim/joystick/joy_mapped_axis_value	float[79]	n	float	Fully processed ratio for each axis - either -1 to 1 or 0 to 1.	
+sim/joystick/joy_mapped_axis_avail	int[81]	n	boolean	True if there is joystick hardware of some kind providing this axis right now.	
+sim/joystick/joy_mapped_axis_value	float[81]	n	float	Fully processed ratio for each axis - either -1 to 1 or 0 to 1.	
 sim/joystick/eq_ped_nobrk	int	y	boolean	Hardware settings: Pedal nobrk (writable since 930 to auto-set user preferences)	
 sim/joystick/eq_ped_wibrk	int	y	boolean	Hardware settings: Pedal wlbrk (writable since 930 to auto-set user preferences)	
 sim/joystick/eq_pfc_pedals	int	y	boolean	Equipment settings: PFC pedal (writable since 930 to auto-set user preferences)	
@@ -2611,7 +2621,7 @@ sim/operation/failures/oil_power_thrust_ratio	float[16]	n	ratio	Oil power or thr
 sim/operation/failures/enable_random_falures	int	y	boolean	Use enable_random_failures	REPLACED - Use the replacement instead.
 sim/operation/failures/enable_random_failures	int	y	boolean	Enable random failures basde on mean time between failures	
 sim/operation/failures/mean_time_between_failure_hrs	float	y	hours	Mean time between failures	
-sim/operation/failures/ram_air_turbine_on	int	y	boolean	Ram air turbine is on?	
+sim/operation/failures/ram_air_turbine_on	int	y	boolean	Ram air turbine is on? (supplies hydraulic pressure in case of total hydraulic pump failure)	
 sim/operation/failures/failures	int[667]	n	enum	661 separate failure codes [was 564]	
 sim/operation/failures/rel_conlock	int	y	failure_enum	Controls locked	
 sim/operation/failures/rel_door_open	int	y	failure_enum	Door Open	
@@ -2880,6 +2890,8 @@ sim/operation/failures/rel_adf1	int	y	failure_enum	ADF 1 (only one ADF failure i
 sim/operation/failures/rel_adf2	int	y	failure_enum	ADF 2	
 sim/operation/failures/rel_gps	int	y	failure_enum	GPS	
 sim/operation/failures/rel_gps2	int	y	failure_enum	GPS	
+sim/operation/failures/rel_lrn1	int	y	failure_enum	long-range navigation pilot (any R-NAV system including IRS, Omega, Loran,...)	
+sim/operation/failures/rel_lrn2	int	y	failure_enum	long-range navigation copilot (any R-NAV system including IRS, Omega, Loran,...)	
 sim/operation/failures/rel_dme	int	y	failure_enum	DME	
 sim/operation/failures/rel_loc	int	y	failure_enum	Localizer	
 sim/operation/failures/rel_gls	int	y	failure_enum	Glide Slope	
@@ -3466,6 +3478,8 @@ sim/operation/override/override_slung_load_size	int	y	boolean	Override slung loa
 sim/operation/override/override_wake_turbulence	int	y	boolean	Overrides and turns off X-plane's simulation of wake turbulence	
 sim/operation/override/override_drogue	int	y	boolean	Overrides control of the refueling drogue.  Write to sim/flightmodel/drogue to control	
 sim/operation/override/override_GPU_volts	int	y	Boolean	Override GPU voltage, for specifying custom GPU cart behavior	
+sim/operation/override/override_hydr_RAT	int	y	Boolean	Override RAT auto-extension, for specfiying the behavior of the ram-air turbine powering the hydraulic system	
+sim/operation/override/getting_elec_ADG	int	y	Boolean	Override ADG auto-extension, for specfiying the behavior of the air-driven generator (ram-air turbine supplying electrical power)	
 sim/operation/prefs/startup_running	int	y	boolean	Start up with the plane running?	
 sim/operation/prefs/warn_overspeed	int	y	boolean	Warn if we exceed max airframe speed	
 sim/operation/prefs/warn_overgforce	int	y	boolean	Warn if we exceed max g-forces on aircraft	
@@ -3533,9 +3547,10 @@ sim/time/timer_is_running_sec	int	y	boolean	Is the timer running?
 sim/time/total_running_time_sec	float	y	seconds	Total time the sim has been up	
 sim/time/total_flight_time_sec	float	y	seconds	Total time since the flight got reset by something	
 sim/time/timer_elapsed_time_sec	float	y	seconds	Total time elapsed on the timer	
-sim/time/local_time_sec	float	n	seconds	Local time  (seconds since midnight??)	
-sim/time/zulu_time_sec	float	y	seconds	Zulu time  (seconds since midnight??)	
-sim/time/local_date_days	int	y	days	Date in days since January 1st	
+sim/time/local_time_sec	float	n	seconds	Local time (seconds since midnight) at the user's location	
+sim/time/zulu_time_sec	float	y	seconds	Zulu time (seconds since midnight)	
+sim/time/local_date_days	int	y	days	Date in days since January 1st at the user's location	
+sim/time/zulu_date_days	int	y	days	Date in days since January 1st in the zulu timezone	
 sim/time/use_system_time	int	y	boolean	Use system date and time for local time	
 sim/time/paused	int	n	boolean	Is the sim paused?  Use cmd keys to change this.	
 sim/time/sim_speed	int	y	ratio	The multiplier for real-time...1 = realtime, 2 = 2x, 0 = paused, etc.	
@@ -3631,7 +3646,7 @@ sim/weapons/q1	float[25]	y	float	(placeholder)
 sim/weapons/q2	float[25]	y	float	(placeholder)	
 sim/weapons/q3	float[25]	y	float	(placeholder)	
 sim/weapons/q4	float[25]	y	float	(placeholder)	
-sim/weapons/armed	int[25]	y	enum	0 = safe (will NOT explode), 1 = armed (WILL explode)	
+sim/weapons/armed	int[25]	y	enum	0 = safe (will NOT explode), 1 = armed (WILL explode). For drop-tanks, arm to allow fuel flow.	
 sim/weapons/firing	int[25]	n	enum	0 = not firing, 1 = firing (This is the launcher that the wpn is attached to, for actual wpn status, also check action_mode and/or next_bull_time)	
 sim/weapons/shell/is_attached	int	n	V11TODO	TODO	
 sim/weapons/shell/thrust_rat	float	n	V11TODO	TODO	
@@ -3742,9 +3757,9 @@ sim/weather/region/weather_source	int	n	enum	What system is currently controllin
 sim/weather/region/update_immediately	int	y	bool	If this is true, any weather region changes EXCEPT CLOUDS will take place immediately instead of at the next update interval (currently 60 seconds).	
 sim/weather/region/atmosphere_alt_levels_m	float[13]	n	meters	The altitudes for the thirteen atmospheric layers returned in other sim/weather/region datarefs.	
 sim/weather/region/wind_altitude_msl_m	float[13]	y	meters	>= 0. The center altitude of this layer of wind in MSL meters.	
-sim/weather/region/wind_speed_msc	float[13]	y	kts	>= 0. The wind speed in knots.	
+sim/weather/region/wind_speed_msc	float[13]	y	m/s	>= 0. The wind speed in meters per second.	
 sim/weather/region/wind_direction_degt	float[13]	y	degrees	[0 - 360] The direction the wind is blowing from in degrees from true north clockwise.	
-sim/weather/region/shear_speed_msc	float[13]	y	kts	>= 0. The gain from the shear in knots.	
+sim/weather/region/shear_speed_msc	float[13]	y	m/s	>= 0. The gain from the shear in meters per second.	
 sim/weather/region/shear_direction_degt	float[13]	y	degrees	[0 - 360]. The direction for a wind shear, per above.	
 sim/weather/region/turbulence	float[13]	y	float	[0 - 10] A turbulence factor, 0-10, the unit is just a scale.	
 sim/weather/region/dewpoint_deg_c	float[13]	y	degreesC	The dew point at specified levels in the atmosphere.	
@@ -4030,17 +4045,19 @@ sim/cockpit2/clock_timer/elapsed_time_seconds	int	n	seconds	Elapsed time on the 
 sim/cockpit2/clock_timer/zulu_time_hours	int	n	hours	Zulu time, hours	
 sim/cockpit2/clock_timer/zulu_time_minutes	int	n	minutes	Zulu time, minutes	
 sim/cockpit2/clock_timer/zulu_time_seconds	int	n	seconds	Zulu time, seconds	
-sim/cockpit2/clock_timer/local_time_hours	int	n	hours	Local time, hours	
-sim/cockpit2/clock_timer/local_time_minutes	int	n	minutes	Local time, minutes	
-sim/cockpit2/clock_timer/local_time_seconds	int	n	seconds	Local time, seconds	
+sim/cockpit2/clock_timer/local_time_hours	int	n	hours	Local time, hours, at the user's current location	
+sim/cockpit2/clock_timer/local_time_minutes	int	n	minutes	Local time, minutes, at the user's current location	
+sim/cockpit2/clock_timer/local_time_seconds	int	n	seconds	Local time, seconds, at the user's current location	
 sim/cockpit2/clock_timer/hobbs_time_hours	int	n	hours	Hobbs meter time, hours	
 sim/cockpit2/clock_timer/hobbs_time_minutes	int	n	minutes	Hobbs meter time, minutes	
 sim/cockpit2/clock_timer/hobbs_time_seconds	int	n	seconds	Hobbs meter time, seconds	
 sim/cockpit2/clock_timer/timer_running	int	n	boolean	True if timer is running	
 sim/cockpit2/clock_timer/timer_is_GMT	int	n	boolean	True if time shown is GMT	
 sim/cockpit2/clock_timer/date_is_showing	int	n	boolean	True if date is showing (date button pressed recently)	
-sim/cockpit2/clock_timer/current_day	int	n	day	Numeric day of month	
-sim/cockpit2/clock_timer/current_month	int	n	month	Numeric month of the year	
+sim/cockpit2/clock_timer/current_day	int	n	day	Numeric day of month at the user's current location	
+sim/cockpit2/clock_timer/current_month	int	n	month	Numeric month of the year at the user's current location	
+sim/cockpit2/clock_timer/zulu_day	int	n	day	Numeric day of month, zulu time	
+sim/cockpit2/clock_timer/zulu_month	int	n	month	Numeric month of the year, zulu time	
 sim/cockpit2/clock_timer/timer_mode	int	y	enum	0 = GMT 1 = Local Time 2 = Date 3 = Timer	
 sim/cockpit2/clock_timer/chrono_time	float[4]	y	seconds	Four chronometers can be used to time seconds up to 99 minutes, 59 seconds. The first chronometer defaults to the X-Plane timer	
 sim/cockpit2/clock_timer/elapsed_time	float[4]	y	seconds	Four elapsed timers can be used to time seconds up to 99 hours	
@@ -4130,6 +4147,8 @@ sim/cockpit2/EFIS/EFIS_1_selection_pilot	int	y	enum	EFIS waypoint 1 is showing: 
 sim/cockpit2/EFIS/EFIS_1_selection_copilot	int	y	enum	EFIS waypoint 2 is showing: 0=ADF1, 1=OFF, 2=VOR1 or 3=FMS1 -- Copilot	
 sim/cockpit2/EFIS/EFIS_2_selection_pilot	int	y	enum	EFIS waypoint 1 is showing: 0=ADF2, 1=OFF, 2=VOR2 or 3=FMS2 -- Pilot	
 sim/cockpit2/EFIS/EFIS_2_selection_copilot	int	y	enum	EFIS waypoint 2 is showing: 0=ADF2, 1=OFF, 2=VOR2 or 3=FMS2 -- Copilot	
+sim/cockpit2/EFIS/EFIS_hdg_hidden_pilot	int	y	enum	EFIS HDG bug is hidden -- Pilot	
+sim/cockpit2/EFIS/EFIS_hdg_hidden_copilot	int	y	enum	EFIS HDG bug is hidden -- Copilot	
 sim/cockpit2/EFIS/EFIS_page	int[6]	y	boolean	An array of EFIS page switches for selecting which EFIS page is visible.	
 sim/cockpit2/EFIS/G1000_reversionary_mode	int[2]	y	boolean	Does the G1000 display condensed PFD/MFD information for single-screen operation?	
 sim/cockpit2/EFIS/map_range_steps	int[8]	y	nautical_miles	Range steps 0..7 of the ND map. 0 entries if selector has less than 8 stops.	
@@ -4185,6 +4204,7 @@ sim/cockpit2/electrical/GPU_generator_amps	float	y	amps	GPU external power gener
 sim/cockpit2/electrical/GPU_generator_volts	float	y	volts	GPU external power generator voltage	
 sim/cockpit2/electrical/GPU_can_be_called_for	int	n	Boolean	True if the aircraft is in a situation where ground power can be requested (e.g. a capable airport, on the ground, not flying)	
 sim/cockpit2/electrical/RAT_generator_on	int	y	boolean	air-driven generator is turned on, 0 or 1.	
+sim/cockpit2/electrical/RAT_generator_extended	int	y	boolean	air-driven generator is extended, 0 or 1.	
 sim/cockpit2/electrical/RAT_generator_amps	float	y	amps	air-driven generator amperage	
 sim/cockpit2/electrical/RAT_generator_volts	float	n	volts	air-driven generator voltage	
 sim/cockpit2/electrical/cross_tie	int	y	boolean	Switch to connect the two busses together - power from one feeds the other.  0 or 1.	
@@ -4204,7 +4224,7 @@ sim/cockpit2/electrical/HUD_brightness_ratio	float	n	ratio	Actual HUD brightness
 sim/cockpit2/electrical/HUD_brightness_ratio_auto	float	n	ratio	Actual HUD brightness, taking into account failures	
 sim/cockpit2/electrical/HUD_brightness_ratio_manual	float	n	ratio	Actual HUD brightness, taking into account failures	
 sim/cockpit2/electrical/HUD_brightness_attenuation_ref_nits	float	y	nits	Actual HUD brightness	
-sim/cockpit2/electrical/display_screen_brightness	float[13]	n	ratio	Brightness of display screens (ratio)	
+sim/cockpit2/electrical/display_screen_brightness	float[16]	n	ratio	Brightness of display screens (ratio)	
 sim/cockpit2/engine/actuators/cyclic_elevator_deg	float[16]	y	degrees	Longitudinal cyclic COMMAND, in degrees. Positive forwards cyclic.	
 sim/cockpit2/engine/actuators/cyclic_aileron_deg	float[16]	y	degrees	Lateral cyclic COMMAND, in degrees. Positive right cyclic.	
 sim/cockpit2/engine/actuators/throttle_ratio	float[16]	y	ratio	Throttle position of the handle itself, from 0.0 (idle) to 1.0 (max normal).	
@@ -4241,6 +4261,7 @@ sim/cockpit2/engine/actuators/fuel_pump_on	int[16]	y	enum	Fuel pump, on or off. 
 sim/cockpit2/engine/actuators/idle_speed	int[16]	y	boolean	Idle speed, hi=1 or lo=0.	
 sim/cockpit2/engine/actuators/idle_speed_ratio	float[16]	y	[0..1]	Idle speed, hi=1 or lo=0 - continuous control	
 sim/cockpit2/engine/actuators/prop_mode	int[16]	y	enum	Propeller and engine operation mode. It is used for props and jets. Mode 0 is feathered, 1 is normal, 2 is in beta, and reverse (prop or jet) is mode 3.	
+sim/cockpit2/engine/actuators/reverse_lockout	int[16]	y	enum	Reverser lockout. 0 = reverse available, 1 = cannot acticate reverse now, 2 = like 1, but it also retracts reverse if it was turned on legitimately before.	
 sim/cockpit2/engine/actuators/prop_pitch_deg	float[16]	y	degrees	REQUESTED pitch of the prop in degrees from its flat-pitch setting.	
 sim/cockpit2/engine/actuators/start_lock_engaged	int[16]	y	boolean	Start lock to lock prop into fine pitch position so it doesn't feather on loss of oil pressure, for fixed turbofan engines.	
 sim/cockpit2/engine/actuators/unfeather_pump_running	int[16]	y	boolean	Manual unfeather pump can provide oil pressure to the governor, to unfeather a stopped prop when the startlocks weren't engaged. Running the pump first unfeathers the prop and then engages the startlock	
@@ -4626,6 +4647,8 @@ sim/cockpit2/radios/actuators/nav_com_adf_mode	int	y	enum	Frequency-to-change se
 sim/cockpit2/radios/actuators/transponder_code	int	y	transponder_code	Current Transponder code (0000-7777)	
 sim/cockpit2/radios/actuators/flight_id	byte[8]	y	byte[8]	Flight ID, as transmitted in Mode-S. Up to 7 characters, like N844X or KLM511. This is NOT the Mode-S hexcode!	
 sim/cockpit2/radios/actuators/transponder_mode	int	y	enum	Transponder mode (off=0, stdby=1, on (mode A)=2, alt (mode C)=3, test=4, GND (mode S)=5, ta_only (mode S)=6, ta/ra=7)	
+sim/cockpit2/radios/actuators/tcas_sys_select	int	y	enum	TCAS System select (where it gets its barometric info from: 0-pilot 1-copilot instruments)	
+sim/cockpit2/radios/actuators/tcas_filter	int	y	enum	TCAS Alt Filter (0=Normal/All, 1=Threats only , 2=Above(-2700+9900), 3=Below(-9900+2700), 4=Unrestricted)	
 sim/cockpit2/radios/actuators/audio_com_selection	int	y	enum	6=com1,7=com2	
 sim/cockpit2/radios/actuators/audio_nav_selection	int	y	enum	0=nav1,1=nav2,2=adf1,3=adf2,9=none	
 sim/cockpit2/radios/actuators/audio_com_selection_man	int	y	enum	6=com1,7=com2 - this is for old audio panels that do not automatically select the listener as well	
@@ -4794,6 +4817,14 @@ sim/cockpit2/radios/indicators/adf1_nav_id	byte[150]	y	string	Current selected n
 sim/cockpit2/radios/indicators/adf2_nav_id	byte[150]	y	string	Current selected navID - ADF 2	
 sim/cockpit2/radios/indicators/gps_nav_id	byte[150]	y	string	Current selected navID - GPS 1	
 sim/cockpit2/radios/indicators/gps2_nav_id	byte[150]	y	string	Current selected navID - GPS 2	
+sim/cockpit2/radios/indicators/fms1_act_eta	float	n	seconds	FMS1 estimated time of arrival at active waypoint, seconds since midnight zulu time	
+sim/cockpit2/radios/indicators/fms1_act_eta_hour	int	n	hour	FMS1 estimated time of arrival at active waypoint, hours zulu time	
+sim/cockpit2/radios/indicators/fms1_act_eta_minute	int	n	minute	FMS1 estimated time of arrival at active waypoint, minutes zulu time	
+sim/cockpit2/radios/indicators/fms1_act_eta_second	int	n	second	FMS1 estimated time of arrival at active waypoint, seconds zulu time	
+sim/cockpit2/radios/indicators/fms2_act_eta	float	n	seconds	FMS2 estimated time of arrival at active waypoint, seconds since midnight zulu time	
+sim/cockpit2/radios/indicators/fms2_act_eta_hour	int	n	hour	FMS2 estimated time of arrival at active waypoint, hours zulu time	
+sim/cockpit2/radios/indicators/fms2_act_eta_minute	int	n	minute	FMS2 estimated time of arrival at active waypoint, minutes zulu time	
+sim/cockpit2/radios/indicators/fms2_act_eta_second	int	n	second	FMS2 estimated time of arrival at active waypoint, seconds zulu time	
 sim/cockpit2/radios/indicators/dme_nav_id	byte[150]	y	string	Current selected navID - DME	
 sim/cockpit2/radios/indicators/nav3_nav_id	byte[150]	y	string	Current selected navID - nav radio 3	
 sim/cockpit2/radios/indicators/nav4_nav_id	byte[150]	y	string	Current selected navID - nav radio 4	
@@ -4921,14 +4952,17 @@ sim/cockpit2/radios/indicators/fms_vtk_pilot	float	n	feet	FMS Vertical Track Err
 sim/cockpit2/radios/indicators/fms_distance_to_tod_pilot	float	n	nautical_miles	FMS Distance to Top of Descent	
 sim/cockpit2/radios/indicators/fms_acceleration_alt	float	n	feet	FMS acceleration altitude	
 sim/cockpit2/radios/indicators/fms_thrust_reduction_alt	float	n	feet	FMS thrust reduction altitude	
+sim/cockpit2/radios/indicators/fms_zero_fuel_weight	float	n	kg	FMS zero fuel weight	
+sim/cockpit2/radios/indicators/fms_gross_weight	float	n	kg	FMS gross weight	
 sim/cockpit2/radios/indicators/fms_tod_before_index_pilot	int	n	index	Index of waypoint in flightplan before which top of descent is located	
 sim/cockpit2/radios/indicators/fms_tod_before_distance_pilot	float	n	nautical_miles	Distance from top of descent to Nth waypoint (wayoint found via fms_tod_before_index_pilot)	
 sim/cockpit2/radios/indicators/fms_vertical_msg_pilot	int	n	enum	0=none, 1=Decelerate, 2=extended speed brake, 3=retract speed brake	
 sim/cockpit2/radios/indicators/fms_vertical_msg_copilot	int	n	enum	0=none, 1=Decelerate, 2=extended speed brake, 3=retract speed brake	
 sim/cockpit2/radios/indicators/fms_transition_alt	float	n	feet	FMS transition altitude	
 sim/cockpit2/radios/indicators/fms_transition_level	float	n	feet	FMS transition level	
+sim/cockpit2/radios/indicators/fms_sel_flap_setting	int	n	int	FMS selected flap setting for T/O or LDG calculation	
 sim/cockpit2/radios/indicators/nav_src_ref	int	n	enum	Navigation Source Reference: 0=LNAV/VNAV, 1=FMC, 2=ILS, 3=GLS	
-sim/cockpit2/radios/indicators/ian_mode	int	n	enum	Integrated Approach Navigation. Which signal is overriden: 0=None, 1=Glide path only, 2=Final Approach Course and Glide Path	
+sim/cockpit2/radios/indicators/ian_mode	int	y	enum	Integrated Approach Navigation. Which signal is overriden: 0=None, 1=Glide path only, 2=Final Approach Course and Glide Path. Writeable when override_gps=1	
 sim/cockpit2/radios/indicators/fas_id	byte[150]	n	string	Final Approach Segment ID, such as 'IFNW', 'W05A', 'G25A', 'RNV23LY' depending on type of approach being flown	
 sim/cockpit2/radios/indicators/fac	float	n	degrees	Final Approach Course	
 sim/cockpit2/radios/indicators/ltp_id	byte[150]	n	string	Landing Threshold Point ID, or 'DME' in case of ILS approach	
@@ -5007,6 +5041,38 @@ sim/cockpit2/radios/indicators/fms_cdu2_style_line12	byte[24]	n	bitfield	See htt
 sim/cockpit2/radios/indicators/fms_cdu2_style_line13	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
 sim/cockpit2/radios/indicators/fms_cdu2_style_line14	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
 sim/cockpit2/radios/indicators/fms_cdu2_style_line15	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line0	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line1	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line2	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line3	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line4	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line5	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line6	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line7	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line8	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line9	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line10	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line11	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line12	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line13	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line14	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_text_line15	byte[]	n	string	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line0	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line1	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line2	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line3	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line4	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line5	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line6	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line7	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line8	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line9	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line10	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line11	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line12	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line13	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line14	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
+sim/cockpit2/radios/indicators/fms_cdu3_style_line15	byte[24]	n	bitfield	See https://developer.x-plane.com/article/datarefs-for-the-cdu-screen/	
 sim/cockpit2/switches/avionics_power_on	int	y	boolean	Switch, 0 or 1.	
 sim/cockpit2/switches/gnd_com_power_on	int	y	boolean	Switch, 0 or 1. This is to turn COM1 on to get a clearance without turning the rest of the avionics on.	
 sim/cockpit2/switches/navigation_lights_on	int	y	boolean	Switch, 0 or 1.	
@@ -5023,7 +5089,7 @@ sim/cockpit2/switches/prop_sync_on	int	y	boolean	Switch, 0 or 1.
 sim/cockpit2/switches/jet_sync_mode	int	y	enum	Switch, 0 or 1. fan=0, off=1, turbine=2 sync engines when RPM of spools are close	
 sim/cockpit2/switches/electric_hydraulic_pump_on	int	y	boolean	Switch, 0 or 1. electric hydro-pressure pump	
 sim/cockpit2/switches/electric_hydraulic_pump2_on	int	y	boolean	Switch, 0 or 1. electric hydro-pressure pump #2	
-sim/cockpit2/switches/ram_air_turbine_on	int	y	boolean	Switch, 0 or 1. ram air turbine (the rat) when total failure	
+sim/cockpit2/switches/ram_air_turbine_on	int	y	boolean	Switch, 0 or 1. ram air turbine (the rat) supplies hydraulic pressure in case of total hydraulic pump failure	
 sim/cockpit2/switches/yaw_damper_on	int	y	boolean	Switch, 0 or 1.	
 sim/cockpit2/switches/artificial_stability_on	int	y	boolean	Switch, 0 or 1.	
 sim/cockpit2/switches/artificial_stability_pitch_on	int	y	boolean	Switch, 0 or 1.	
@@ -5069,12 +5135,17 @@ sim/cockpit2/tcas/indicators/relative_bearing_degs	float[64]	y	degrees	Relative 
 sim/cockpit2/tcas/indicators/relative_distance_mtrs	float[64]	y	meters	Distance to each other plane in meters for TCAS	
 sim/cockpit2/tcas/indicators/relative_altitude_mtrs	float[64]	y	meters	Relative altitude (positive means above us) for TCAS	
 sim/cockpit2/tcas/indicators/tcas_alert	int	y	boolean	True if a TCAS alert is currently issued.	
+sim/cockpit2/tcas/indicators/tcas_sensitivity	int	n	enum	TCAS Sensitivity Level (0-7 indicating Levels 1 through 7 above FL420)	
+sim/cockpit2/tcas/indicators/tcas_message	int	n	enum	Annunciation: (1-Climb, Climb, 2-Climb, Crossing, Climb, 3-Climb, Increase Climb, 4-Climb, Climb Now, 5-Clear of Conflict, 6-Descend, Descend, 7-Descend, Crossing, Descend, 8-Descend, Increase Descend, 9-Descend, Descend Now, 10-Monitor Vertical Speed, 11-Maintain Vertical Speed, Maintain, 12-Maintain Vertical Speed, Crossing, Maintain, 13-Level Off, Level Off, 14-Traffic, Traffic, 15-Test Pass, 16-Test Fail)	
+sim/cockpit2/tcas/indicators/tcas_active_advisory	int	n	enum	TCAS active advisory: (0=None, 1=Traffic, 2=Resolution)	
+sim/cockpit2/tcas/indicators/tcas_vs_bands	float[6]	n	feet/min	Vertical speed bands indicating TCAS advisory. Red low [0][1], green [2][3], and red high [4][5] bands. Only one or both red bands can be indicated. Same values for lower and upper bound means a band is not indicated.	
 sim/cockpit2/tcas/indicators/tcas_num_acf	int	n	integer	If TCAS is not overriden by plgugin, returns the number of planes in X-Plane, which might be under plugin control or X-Plane control. If TCAS is overriden, returns how many targets are actually being written to with the override. These are not necessarily consecutive entries in the TCAS arrays.	
-sim/cockpit2/tcas/targets/modeS_id	int[64]	y	integer	24bit (0-16777215 or 0 - 0xFFFFFF) unique ID of the airframe. This is also known as the ADS-B 'hexcode'.	
+sim/cockpit2/tcas/targets/modeS_id	int[64]	y	integer	24bit (1-16777215 or 1 - 0xFFFFFF) unique ID of the airframe. This is also known as the ADS-B 'hexcode'.	
 sim/cockpit2/tcas/targets/modeC_code	int[64]	y	integer	Mode C transponder code 0000 to 7777. This is not really an integer, this is an octal number.	
 sim/cockpit2/tcas/targets/flight_id	byte[512]	y	string	7 character Flight ID, terminated by 0 byte. ICAO flightplan item 7.	
 sim/cockpit2/tcas/targets/icao_type	byte[512]	y	string	7 character ICAO code, terminated by 0 byte. C172, B738, etc... see https://www.icao.int/publications/DOC8643/Pages/Search.aspx	
 sim/cockpit2/tcas/targets/ssr_mode	int[64]	y	enum	Transponder mode: off=0, stdby=1, on (mode A)=2, alt (mode C)=3, test=4, GND (mode S)=5, ta_only (mode S)=6, ta/ra=7	
+sim/cockpit2/tcas/targets/threat	int[64]	y	enum	Threat-level assigned to this target (-1=unassigned/not tracked, 0=Other, 1=Proximity, 2=Traffic Advisory, 3=Resolution Advisory (Preventive), 4=Resolution Advisory (Corrective)	
 sim/cockpit2/tcas/targets/position/x	float[64]	y	meter	local X coordinate, meter. Writeable only when override_TCAS is set.	
 sim/cockpit2/tcas/targets/position/y	float[64]	y	meter	local Y coordinate, meter. Writeable only when override_TCAS is set.	
 sim/cockpit2/tcas/targets/position/z	float[64]	y	meter	local Z coordinate, meter. Writeable only when override_TCAS is set.	
@@ -5492,6 +5563,7 @@ sim/flightmodel2/misc/cg_offset_x	float	y	meters	Lateral Center of Gravity (can'
 sim/flightmodel2/misc/cg_offset_z_mac	float	y	percentMAC	Longitudinal Center of Gravity, including payload, internal and external fuel and weapons, measured in % mean aerodynamic chord of the wings (Wings 1-4 in Plane Maker numbering).	
 sim/flightmodel2/misc/zfw_cg_offset_z	float	n	meters	Longitudinal Center of Gravity of the zero fuel weight. This is including payload, but excluding internal and external fuel and external weapons. Read-only (use individual payload station weight to change it)	
 sim/flightmodel2/misc/zfw_cg_offset_x	float	n	meters	Lateral Center of Gravity of the zero fuel weight. This is including payload (such as pilots in a helicopter), but excluding internal and external fuel and external weapons. Read-only (use individual payload station weight to change it)	
+sim/flightmodel2/misc/plugin_particle_light_leak	float	y	ratio	The amount of light leak from exterior lights to light up particles. This is set by plugins and consumed by custom particle FX.	
 sim/flightmodel2/misc/contact/x	float[10]	n	meters	X location of contact, ACF relative	
 sim/flightmodel2/misc/contact/y	float[10]	n	meters	Y location of contact, ACF relative	
 sim/flightmodel2/misc/contact/z	float[10]	n	meters	Z location of contact, ACF relative	
